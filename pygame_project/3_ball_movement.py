@@ -226,7 +226,7 @@ while running:
             #print(character.GetHeight())
             #충돌판정 원과 사각의 충돌 제대로 됨
             if IntersectCircleAndSquare((ball_pos_x + (ball_images[ball_img_idx].GetWidth() / 2)), (ball_pos_y + (ball_images[ball_img_idx].GetWidth() / 2)), (ball_images[ball_img_idx].GetWidth() / 2), character.GetPositionX(), character.GetPositionY(), (character.GetPositionX() + character.GetWidth()), (character.GetPositionY() + character.GetHeight())):
-                print("충돌");
+                print("충돌!!");
                 drawing = False;
                 
             else:
