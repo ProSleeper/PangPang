@@ -121,10 +121,10 @@ weapon = GameObject(os.path.join(image_path, "weapon.png"));
 weapons  = list();
 weapon_speed = 10;
 
-ball_images = [ GameObject(os.path.join(image_path, "poong.png")), 
-                GameObject(os.path.join(image_path, "balloon2.png")), 
-                GameObject(os.path.join(image_path, "balloon3.png")), 
-                GameObject(os.path.join(image_path, "balloon4.png"))]
+ball_images = [ GameObject(os.path.join(image_path, "poong1.png")), 
+                GameObject(os.path.join(image_path, "poong2.png")), 
+                GameObject(os.path.join(image_path, "poong3.png")), 
+                GameObject(os.path.join(image_path, "poong4.png"))]
 
 #공이 떨어지는 속도
 #이건 작성자가 임의로 테스트 해보고 정한듯
@@ -138,6 +138,13 @@ ballsInitValue.append({"pos_x" : 50,"pos_y" : 50, "img_idx" : 0, "to_x" : 3, "to
 
 running = True;
 drawing = True;
+gameOver = False;
+gameSuccess = False;
+
+totalTime = 100;
+startTick = pygame.time.get_ticks();
+
+game_font = pygame.font.Font(None, 40);
 
 while running:
         
@@ -152,24 +159,22 @@ while running:
                 character_to_x -= character_speed;
             elif event.key == pygame.K_RIGHT:
                 character_to_x += character_speed;
-            elif event.key == pygame.K_UP:
-                character_to_y -= character_speed;
-            elif event.key == pygame.K_DOWN:
-                character_to_y += character_speed;
             elif event.key == pygame.K_SPACE and drawing:
                 weapon_x_pos = character.GetPositionX() + (character.GetWidth() / 2) - (weapon.GetWidth() / 2);
                 weapon_y_pos = character.GetPositionY();
                 weapons.append([weapon_x_pos, weapon_y_pos]);
-            elif event.key == pygame.K_RETURN:
+            elif event.key == pygame.K_RETURN and not drawing:
+                totalTime = 100;
+                startTick = pygame.time.get_ticks();
                 drawing = True;
+                gameOver = False;
+                weapons = list();
                 balls = copy.deepcopy(ballsInitValue);
                 character.SetPosition((SCREEN_WIDTH / 2) - (character.GetWidth() / 2), SCREEN_HEIGHT - character.GetHeight() - stage.GetHeight())
 
         if event.type == pygame.KEYUP:
             if event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT:
                 character_to_x = 0;
-            elif event.key == pygame.K_UP or event.key == pygame.K_DOWN:
-                character_to_y = 0;
 
     if drawing:
 
@@ -210,14 +215,6 @@ while running:
         
         screen.blit(background.GetObject(), background.GetPosition())
 
-        for weapon_x_pos, weapon_y_pos in weapons:
-            weapon.SetPosition(weapon_x_pos, weapon_y_pos)
-            if IntersectCircleAndSquare((ball_pos_x + (ball_images[ball_img_idx].GetWidth() / 2)), (ball_pos_y + (ball_images[ball_img_idx].GetWidth() / 2)), (ball_images[ball_img_idx].GetWidth() / 2), weapon.GetPositionX(), weapon.GetPositionY(), (weapon.GetPositionX() + weapon.GetWidth()), (weapon.GetPositionY() + weapon.GetHeight())):
-                weapons.remove([weapon.GetPositionX(), weapon.GetPositionY()])
-                balls[0]["img_idx"] = 1;
-                
-            screen.blit(weapon.GetObject(), weapon.GetPosition())
-
         for idx, val in enumerate(balls):
             ball_pos_x = val["pos_x"]
             ball_pos_y = val["pos_y"]
@@ -225,21 +222,58 @@ while running:
             ball_images[ball_img_idx].SetPosition(ball_pos_x, ball_pos_y)
             #print(character.GetHeight())
             #충돌판정 원과 사각의 충돌 제대로 됨
+
+            for weapon_x_pos, weapon_y_pos in weapons:
+                weapon.SetPosition(weapon_x_pos, weapon_y_pos)
+                if IntersectCircleAndSquare((ball_pos_x + (ball_images[ball_img_idx].GetWidth() / 2)), (ball_pos_y + (ball_images[ball_img_idx].GetWidth() / 2)), (ball_images[ball_img_idx].GetWidth() / 2), weapon.GetPositionX(), weapon.GetPositionY(), (weapon.GetPositionX() + weapon.GetWidth()), (weapon.GetPositionY() + weapon.GetHeight())):
+                    weapons.remove([weapon.GetPositionX(), weapon.GetPositionY()])
+                    balls[idx]["img_idx"] = balls[idx]["img_idx"] + 1;
+                    balls[idx]["init_spd_y"] = balls[idx]["init_spd_y"] + 1;
+                    balls[idx]["to_y"] = -4
+
+                    if balls[idx]["img_idx"] > 3:
+                        del balls[idx]
+                        break;
+                    else:
+                        balls.append({"pos_x" : balls[idx]["pos_x"],"pos_y" : balls[idx]["pos_y"], "img_idx" : balls[idx]["img_idx"], "to_x" : balls[idx]["to_x"] * -1, "to_y" : balls[idx]["to_y"], "init_spd_y" : balls[idx]["init_spd_y"]});
+            
+
             if IntersectCircleAndSquare((ball_pos_x + (ball_images[ball_img_idx].GetWidth() / 2)), (ball_pos_y + (ball_images[ball_img_idx].GetWidth() / 2)), (ball_images[ball_img_idx].GetWidth() / 2), character.GetPositionX(), character.GetPositionY(), (character.GetPositionX() + character.GetWidth()), (character.GetPositionY() + character.GetHeight())):
                 # print("충돌!!");
+                gameOver = True;
                 drawing = False;
-                
             else:
-                # print("안충돌")
+                # print("안충돌")0
                 pass
             screen.blit(ball_images[ball_img_idx].GetObject(), ball_images[ball_img_idx].GetPosition());
+
+
+        for weapon_x_pos, weapon_y_pos in weapons:
+            weapon.SetPosition(weapon_x_pos, weapon_y_pos)
+            screen.blit(weapon.GetObject(), weapon.GetPosition())
 
         # 이 blit이라는 메서드는 객체를 생성해준다기보다 source에 해당하는 이미지를 복사해준다는 개념인듯
         screen.blit(stage.GetObject(), stage.GetPosition())
         screen.blit(character.GetObject(), character.GetPosition())
 
+
+        elapsed_time = (pygame.time.get_ticks() - startTick) / 1000 ;
+
+        timer = game_font.render(str(int(totalTime - elapsed_time)), True, (255, 255, 255));
+        screen.blit(timer, (SCREEN_WIDTH - 50, SCREEN_HEIGHT - 40));
+
+        if totalTime - elapsed_time < 1:
+            gameOver = True;
+            drawing = False;
+            
+        if gameOver == True:
+            gameOverStr = game_font.render("Game Over", True, (255, 255, 255));
+            screen.blit(gameOverStr, (SCREEN_WIDTH / 2 - 70, SCREEN_HEIGHT / 2 - 30));
+        elif len(balls) == 0:
+            gameOverStr = game_font.render("Game Success", True, (255, 255, 255));
+            screen.blit(gameOverStr, (SCREEN_WIDTH / 2 - 70, SCREEN_HEIGHT / 2 - 30));  
+            drawing = False;
+
     pygame.display.update();
-
-
 
 pygame.quit();
