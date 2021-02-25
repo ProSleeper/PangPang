@@ -265,13 +265,13 @@ while running:
         if totalTime - elapsed_time < 1:
             gameOver = True;
             drawing = False;
-            
+
         if gameOver == True:
             gameOverStr = game_font.render("Game Over", True, (255, 255, 255));
             screen.blit(gameOverStr, (SCREEN_WIDTH / 2 - 70, SCREEN_HEIGHT / 2 - 30));
         elif len(balls) == 0:
             gameOverStr = game_font.render("Game Success", True, (255, 255, 255));
-            screen.blit(gameOverStr, (SCREEN_WIDTH / 2 - 70, SCREEN_HEIGHT / 2 - 30));  
+            screen.blit(gameOverStr, (SCREEN_WIDTH / 2 - 80, SCREEN_HEIGHT / 2 - 30));  
             drawing = False;
 
     pygame.display.update();
