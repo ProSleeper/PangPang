@@ -16,6 +16,7 @@ window.resizable(False, False)
 canvas = Canvas(window, width = 500, height = 500)
 canvas.pack()
 canvas.create_line(0, 0, 100, 100, width = 5, fill = "#ccc")
+canvas.create_line(10, 280, 200, 280, width = 5, fill = "#ccc")
 canvas.create_oval(100, 100, 150, 150, width = 5, outline = "#000")
 window.mainloop()
 
