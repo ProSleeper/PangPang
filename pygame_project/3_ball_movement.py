@@ -156,7 +156,7 @@ while running:
                 character_to_y -= character_speed;
             elif event.key == pygame.K_DOWN:
                 character_to_y += character_speed;
-            elif event.key == pygame.K_SPACE:
+            elif event.key == pygame.K_SPACE and drawing:
                 weapon_x_pos = character.GetPositionX() + (character.GetWidth() / 2) - (weapon.GetWidth() / 2);
                 weapon_y_pos = character.GetPositionY();
                 weapons.append([weapon_x_pos, weapon_y_pos]);
@@ -226,11 +226,12 @@ while running:
             #print(character.GetHeight())
             #충돌판정 원과 사각의 충돌 제대로 됨
             if IntersectCircleAndSquare((ball_pos_x + (ball_images[ball_img_idx].GetWidth() / 2)), (ball_pos_y + (ball_images[ball_img_idx].GetWidth() / 2)), (ball_images[ball_img_idx].GetWidth() / 2), character.GetPositionX(), character.GetPositionY(), (character.GetPositionX() + character.GetWidth()), (character.GetPositionY() + character.GetHeight())):
-                print("충돌!!");
+                # print("충돌!!");
                 drawing = False;
                 
             else:
-                print("안충돌")
+                # print("안충돌")
+                pass
             screen.blit(ball_images[ball_img_idx].GetObject(), ball_images[ball_img_idx].GetPosition());
 
         # 이 blit이라는 메서드는 객체를 생성해준다기보다 source에 해당하는 이미지를 복사해준다는 개념인듯
