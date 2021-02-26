@@ -23,6 +23,8 @@ window.resizable(False, False)
 canvas = Canvas(window, width = SCREEN_WIDTH, height = SCREEN_HEIGHT)
 canvas.place(x = 0, y = 10, width = 720, height = 350, anchor = "nw")
 
+inputAlphabet = StringVar();
+sliceQuestWord = list();
 
 def CheckCharactersCount():
     if len(inputAlphabet.get()) > 1:    # 현재 입력받은 수가 1이상이 되면
@@ -50,29 +52,18 @@ def InputboxRestrictions(event):
     ConverToUppercase();
 
 def AttemptToVerifyWords():
+
+
+
     canvas.itemconfigure(10, fill = "#000");
 
 def InitData():
 
-    DrawHangMan();
-    
+    InitHangMan();
+    InitQuestWord();
+    InitInputBox();
 
-    # 단어 입력은 최대 9글자로 받거나 9글자 이하 단어만 문제로 나오게 함
-    sliceQuestWord = list();
-    savedWordList = ["BANANA", "ORANGE", "APPLE", "MELON", "MANGO", "CHOCOLATE", "STARBUCKS", "LANGUAGE", "NAPKIN"];
-    randQuestion = savedWordList[random.randrange(0, len(savedWordList))];
-
-    # 랜덤하게 고른 단어를 알파벳 한개씩 쪼개서 list에 저장
-    for alphabet in range(len(randQuestion)):
-        sliceQuestWord.append([randQuestion[alphabet], DEFAULT_WORD_COLOR_GREY])
-
-    # 밑 줄 그리기 + 정답을 맞추면 단어도 그리고 밑줄도 같이 검은색으로 변경
-    for idx, value in enumerate(sliceQuestWord):
-        if value[1] == ANSWER_WORD_COLOR_BLACK:
-            canvas.create_text(295 + (idx * 50), 180, font=('Calibri', 30, 'bold'), anchor='center', text=value[0], fill = value[1])
-        canvas.create_line(275 + (idx * 50), 210, 315 + (idx * 50), 210, width = 5, fill = value[1]);
-
-def DrawHangMan():
+def InitHangMan():
     # 행맨 그림 그려주는 코드
     canvas.create_line(205, 210, 260, 260, width = 5, fill = DEFAULT_WORD_COLOR_GREY)                                #오른발
     canvas.create_line(205, 210, 150, 260, width = 5, fill = DEFAULT_WORD_COLOR_GREY)                                #왼발
@@ -85,15 +76,29 @@ def DrawHangMan():
     canvas.create_line(75, SCREEN_HEIGHT - 140, 75, 10, width = 5, fill = DEFAULT_WORD_COLOR_GREY)                   #기둥
     canvas.create_line(10, SCREEN_HEIGHT - 140, 150, SCREEN_HEIGHT - 140, width = 5, fill = DEFAULT_WORD_COLOR_GREY) #밑 바닥
 
+def InitQuestWord():
+    # 단어 입력은 최대 9글자로 받거나 9글자 이하 단어만 문제로 나오게 함
+    savedWordList = ["BANANA", "ORANGE", "APPLE", "MELON", "MANGO", "CHOCOLATE", "STARBUCKS", "LANGUAGE", "NAPKIN"];
+    randQuestion = savedWordList[random.randrange(0, len(savedWordList))];
+
+    # 랜덤하게 고른 단어를 알파벳 한개씩 쪼개서 list에 저장
+    for alphabet in range(len(randQuestion)):
+        sliceQuestWord.append([randQuestion[alphabet], DEFAULT_WORD_COLOR_GREY])
+
+    # 밑 줄 그리기 + 정답을 맞추면 단어도 그리고 밑줄도 같이 검은색으로 변경
+    for idx, value in enumerate(sliceQuestWord):
+        # if value[1] == ANSWER_WORD_COLOR_BLACK:
+        canvas.create_text(295 + (idx * 50), 180, font=('Calibri', 30, 'bold'), anchor='center', text=value[0], fill = value[1])
+        canvas.create_line(275 + (idx * 50), 210, 315 + (idx * 50), 210, width = 5, fill = value[1]);
+
+def InitInputBox():
+    inputBox = Entry(window, font=("Calibri 30 bold"), textvariable=inputAlphabet)
+    inputBox.place(x = 400, y = 400, width = 35, height = 40, anchor = "center")
+    inputBox.bind("<Return>",  lambda x: x)
+    inputBox.bind("<KeyRelease>", InputboxRestrictions)
+    inputBox.focus()
+
 InitData();
-
-inputAlphabet = StringVar();
-
-inputBox = Entry(window, font=("Calibri 30 bold"), textvariable=inputAlphabet)
-inputBox.place(x = 400, y = 400, width = 35, height = 40, anchor = "center")
-inputBox.bind("<Return>",  lambda x: x)
-inputBox.bind("<KeyRelease>", InputboxRestrictions)
-inputBox.focus()
 
 window.mainloop()
 
