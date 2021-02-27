@@ -24,6 +24,7 @@ window.resizable(False, False)
 canvas = Canvas(window, width = SCREEN_WIDTH, height = 350)
 canvas.place(x = 0, y = 10, width = 720, height = 350, anchor = "nw")
 
+
 sliceQuestWord  = list();
 hangmanLine     = list();
 inputBox        = None;
@@ -78,6 +79,7 @@ def PressReturn(event):
     
     if upperInputText == "":
         return;
+
 
     inputBox.delete(0, END)
 
