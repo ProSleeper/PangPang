@@ -7,6 +7,10 @@ import random
 tkinter로 gui부분을 만들예정
 """
 
+# 총평.
+# 코드가 아직도 많이 중구 난방인듯
+# 파이썬이라서 더 그렇 것도 있는 듯
+
 
 SCREEN_WIDTH            = 720;
 SCREEN_HEIGHT           = 480;
